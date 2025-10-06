@@ -83,7 +83,7 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ss-linux
+          name: ss-linux-${{ matrix.target }}
           path: shadowsocks-rust/build/release/*
 
 

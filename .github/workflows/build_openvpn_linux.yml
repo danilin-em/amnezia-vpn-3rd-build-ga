@@ -59,7 +59,7 @@ jobs:
       - name: Build OpenSSL
         run: |
           cd ${BUILD_DIR}
-          curl https://www.openssl.org/source/openssl-${OPEN_SSL_VER}.tar.gz | tar zx
+          curl -L https://www.openssl.org/source/openssl-${OPEN_SSL_VER}.tar.gz | tar zx
           cd ${BUILD_DIR}/openssl-${OPEN_SSL_VER}
           case "${{ matrix.arch }}" in
             x86_64)
@@ -228,6 +228,8 @@ jobs:
         run: |
           cd ${{env.O3}}/core
           cp -rf openvpn/plugin/linux/ck-ovpn-plugin.h openvpn/transport/client/pluggable/ck-ovpn-plugin.h
+          # Remove pre-built x86_64 plugin that causes linking errors on ARM64
+          rm -f openvpn/plugin/linux/ck-ovpn-plugin.a || true
           mkdir build && cd build
           case "${{ matrix.arch }}" in
             x86_64)
