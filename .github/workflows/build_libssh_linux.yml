@@ -41,9 +41,9 @@ jobs:
         
     - name: Set up build environment
       uses: awalsh128/cache-apt-pkgs-action@latest
-      if: matrix.arch != 'x86' && matrix.arch != 'x86_64'  
+      if: matrix.arch != 'x86' && matrix.arch != 'x86_64'
       with:
-        packages: gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
+        packages: gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
         version: 1.0    
 
 
