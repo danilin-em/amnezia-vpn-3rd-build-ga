@@ -95,7 +95,7 @@ jobs:
         make ssh
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v4
       with:
         name: libssh-linux-${{ matrix.arch }}
         path: ${{ github.workspace }}/libssh-${{env.LIBSSH_VERSION}}/build
@@ -110,10 +110,10 @@ jobs:
 
     steps:
       - name: Setup | Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup | Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Setup | Checksums
         run: for file in $(find ./ -name '*.a' ); do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done

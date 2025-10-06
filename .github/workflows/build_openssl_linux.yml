@@ -84,10 +84,10 @@ jobs:
         esac
 
     - name: Archive Linux OpenSSL libs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         retention-days: 1
-        name: linux-openssl
+        name: linux-openssl-${{ matrix.arch }}
         path: '~/work/3rd-build-ga/3rd-build-ga/openssl/build'            
 
 
@@ -99,10 +99,10 @@ jobs:
 
     steps:
       - name: Setup | Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup | Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Setup | Checksums
         run: for file in $(find ./ -name '*.a' ); do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done
