@@ -87,21 +87,35 @@ jobs:
           echo "******** Downloading LZO sources..."
           echo "************************************************"
           cd ${BUILD_DIR}
-          curl https://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz | tar zx
+          curl -L https://www.oberhumer.com/opensource/lzo/download/lzo-2.10.tar.gz | tar zx
           cd lzo-2.10
           echo "************************************************"
           echo "******** Compiling LZO..."
           echo "************************************************"
-          ./configure --prefix="${INSTALL_DIR}" && make && make install 
+          case "${{ matrix.arch }}" in
+            x86_64)
+              ./configure --prefix="${INSTALL_DIR}" && make && make install
+              ;;
+            arm64)
+              ./configure --host=aarch64-linux-gnu --prefix="${INSTALL_DIR}" CC=aarch64-linux-gnu-gcc && make && make install
+              ;;
+          esac 
       - name: Build LZ4
         run: |
           cd ${BUILD_DIR}
           git clone https://github.com/lz4/lz4
           cd lz4
           git checkout release
-          sudo make install PREFIX="${INSTALL_DIR}"
+          case "${{ matrix.arch }}" in
+            x86_64)
+              sudo make install PREFIX="${INSTALL_DIR}"
+              ;;
+            arm64)
+              sudo make install PREFIX="${INSTALL_DIR}" CC=aarch64-linux-gnu-gcc AR=aarch64-linux-gnu-ar
+              ;;
+          esac
           cd ${INSTALL_DIR}/lib
-          sudo rm *.so
+          sudo rm -f *.so *.so.*
       - name: 'Get openvpn'
         uses: actions/checkout@v3
         with:
@@ -223,13 +237,26 @@ jobs:
           # Just copy required headers of OpenSSL (include folder)
           sudo make install
 
+      - name: 'Get Cloak for plugin'
+        if: matrix.arch == 'arm64'
+        uses: actions/checkout@v4
+        with:
+          repository: amnezia-vpn/Cloak
+          ref: master-amnezia
+          path: Cloak
+
+      - name: 'Build Cloak plugin for ARM64'
+        if: matrix.arch == 'arm64'
+        working-directory: Cloak
+        run: |
+          CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc GOOS="linux" GOARCH="arm64" go build -v -o ck-ovpn-plugin.a -buildmode=c-archive ./cmd/ck-ovpn-plugin/
+          cp ck-ovpn-plugin.a ${{env.O3}}/core/openvpn/plugin/linux/
+
       - name: 'Build the OpenVPN 3 client wrapper'
         working-directory: ${{env.O3}}
         run: |
           cd ${{env.O3}}/core
           cp -rf openvpn/plugin/linux/ck-ovpn-plugin.h openvpn/transport/client/pluggable/ck-ovpn-plugin.h
-          # Remove pre-built x86_64 plugin that causes linking errors on ARM64
-          rm -f openvpn/plugin/linux/ck-ovpn-plugin.a || true
           mkdir build && cd build
           case "${{ matrix.arch }}" in
             x86_64)
