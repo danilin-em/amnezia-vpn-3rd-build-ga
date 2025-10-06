@@ -203,7 +203,7 @@ jobs:
 
       - name: Build OpenSSL
         run: |
-          curl https://www.openssl.org/source/openssl-${OPEN_SSL_VER}.tar.gz | tar zx
+          curl -L https://www.openssl.org/source/openssl-${OPEN_SSL_VER}.tar.gz | tar zx
           cd openssl-${OPEN_SSL_VER}
           case "${{ matrix.arch }}" in
             x86_64)
