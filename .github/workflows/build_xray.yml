@@ -60,12 +60,14 @@ jobs:
     strategy:
       matrix:
         # Include amd64 on all platforms.
-        goos: [windows, linux, darwin]
+        goos: [windows, darwin]
         goarch: [amd64, 386]
         exclude:
           # Exclude i386 on darwin
           - goarch: 386
             goos: darwin
+          # Exclude all linux from base matrix (only ARM64 in include section)
+          # - goos: linux
         include:
           # BEIGIN MacOS ARM64
           - goos: darwin

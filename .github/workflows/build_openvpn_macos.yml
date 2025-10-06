@@ -135,7 +135,7 @@ jobs:
           cp src/openvpn/openvpn buildOvpn/${{matrix.os}}_${{matrix.arch}}_${{matrix.build}}/openvpn
       
       - name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: openvpn-macos
           path: openvpn/buildOvpn/* 
@@ -213,7 +213,7 @@ jobs:
           cmake --build . --config Release --target ovpncli
       
       - name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: openvpn3-macos
           path: ${{ github.workspace }}/src/build-openvpn3 
@@ -229,7 +229,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup | Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Setup | Checksums
         run: for file in $(find ./ -name 'o*' ); do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done

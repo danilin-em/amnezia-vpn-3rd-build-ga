@@ -135,7 +135,7 @@ jobs:
           cp src/openvpn/openvpn buildOvpn/${{matrix.arch}}/openvpn
       
       - name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: openvpn-linux
           path: openvpn/buildOvpn/* 
@@ -236,7 +236,7 @@ jobs:
           cmake --build . --config Release --target ovpncli
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: openvpn3-linux
           path: ${{env.O3}}/core/build/test

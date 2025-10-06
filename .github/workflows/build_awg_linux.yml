@@ -40,13 +40,13 @@ jobs:
         case "${{ matrix.arch }}" in
           x86_64)
             make
+            ./amneziawg-go --version
             ;;
           arm64)
             GOARCH=arm64 CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 make
+            file ./amneziawg-go
             ;;
         esac
-        file ./amneziawg-go
-        ./amneziawg-go --version
 
     - name: 'Archive artifacts'
       uses: actions/upload-artifact@v4
