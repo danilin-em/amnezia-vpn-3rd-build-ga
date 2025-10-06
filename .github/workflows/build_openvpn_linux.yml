@@ -215,6 +215,17 @@ jobs:
           cd core/scripts/linux/
           ./build-all
 
+      - name: Rebuild LZ4 for ARM64
+        if: matrix.arch == 'arm64'
+        run: |
+          echo "************************************************"
+          echo "******** Rebuilding LZ4 for ARM64..."
+          echo "************************************************"
+          cd ${{env.DEP_DIR}}/lz4/lz4-linux
+          make clean
+          make CC=aarch64-linux-gnu-gcc AR=aarch64-linux-gnu-ar CFLAGS="-O3 -fno-lto" lib
+          echo "LZ4 rebuilt for ARM64"
+
       - name: Build OpenSSL
         run: |
           curl -L https://www.openssl.org/source/openssl-${OPEN_SSL_VER}.tar.gz | tar zx
