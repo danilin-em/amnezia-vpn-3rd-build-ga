@@ -59,15 +59,15 @@ jobs:
       contents: write
     strategy:
       matrix:
+        # TODO: Restore all platforms after ARM64 testing is complete
+        # Original: goos: [windows, linux, darwin]
         # Include amd64 on all platforms.
-        goos: [windows, darwin]
+        goos: [windows, darwin]  # Temporarily removed linux (only ARM64 in include section)
         goarch: [amd64, 386]
         exclude:
           # Exclude i386 on darwin
           - goarch: 386
             goos: darwin
-          # Exclude all linux from base matrix (only ARM64 in include section)
-          # - goos: linux
         include:
           # BEIGIN MacOS ARM64
           - goos: darwin

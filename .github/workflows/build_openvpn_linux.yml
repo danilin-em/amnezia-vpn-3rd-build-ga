@@ -14,7 +14,9 @@ jobs:
 
     strategy:
       matrix:
-        arch: [arm64] #, x86_64, x86, arm32]
+        # TODO: Restore all architectures after ARM64 testing is complete
+        # Original: arch: [x86_64, arm64] #, x86, arm32]
+        arch: [arm64]  # Temporarily ARM64 only for testing
       fail-fast: false
 
     env:
@@ -152,7 +154,9 @@ jobs:
 
     strategy:
       matrix:
-        arch: [arm64] #, x86_64, x86, arm32]
+        # TODO: Restore all architectures after ARM64 testing is complete
+        # Original: arch: [x86_64, arm64] #, x86, arm32]
+        arch: [arm64]  # Temporarily ARM64 only for testing
       fail-fast: false
 
     env:

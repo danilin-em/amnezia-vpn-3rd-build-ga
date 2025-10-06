@@ -21,7 +21,9 @@ jobs:
       contains(github.event.head_commit.message, '[libssh]')    
     strategy:
       matrix:
-        arch: [arm64]
+        # TODO: Restore all architectures after ARM64 testing is complete
+        # Original: arch: [x86_64, arm64]
+        arch: [arm64]  # Temporarily ARM64 only for testing
         # no-crypto=yes: builds version with all crypto disabled
         # no-crypto=no: builds version with all crypto enabled (where required dependencies are available)
         no_crypto:
