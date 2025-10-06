@@ -263,7 +263,13 @@ jobs:
               cmake -DOPENSSL_ROOT_DIR=${{ github.workspace }}/openssl-${OPEN_SSL_VER} -DCMAKE_EXE_LINKER_FLAGS="-ldl -static-libgcc -static " ..
               ;;
             arm64)
-              cmake -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=aarch64 -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ -DOPENSSL_ROOT_DIR=${{ github.workspace }}/openssl-${OPEN_SSL_VER} -DCMAKE_EXE_LINKER_FLAGS="-ldl -static-libgcc -static " ..
+              cmake -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+                -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ \
+                -DCMAKE_AR=/usr/bin/aarch64-linux-gnu-ar \
+                -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+                -DCMAKE_C_FLAGS="-fno-lto" -DCMAKE_CXX_FLAGS="-fno-lto" \
+                -DOPENSSL_ROOT_DIR=${{ github.workspace }}/openssl-${OPEN_SSL_VER} \
+                -DCMAKE_EXE_LINKER_FLAGS="-ldl -static-libgcc -static -fno-lto" ..
               ;;
           esac
           cmake --build . --config Release --target ovpncli
