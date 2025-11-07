@@ -46,12 +46,12 @@ jobs:
     - name: 'Build desktop Cloak plugin'
       working-directory: Cloak
       run: |
-        sudo apt-get install gcc-mingw-w64 gcc-aarch64-linux-gnu
-        mkdir ./release/plugin
-        mkdir ./release/plugin/linux
+        sudo apt-get update
+        sudo apt-get install -y gcc-mingw-w64 gcc-aarch64-linux-gnu
+        mkdir -p ./release/plugin/linux
+        mkdir -p ./release/plugin/windows
         CGO_ENABLED=1 GOOS="linux" GOARCH="amd64" go build -v -o ./release/plugin/linux/ck-ovpn-plugin.a -buildmode=c-archive ./cmd/ck-ovpn-plugin/
         CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc GOOS="linux" GOARCH="arm64" go build -v -o ./release/plugin/linux/ck-ovpn-plugin-arm64.a -buildmode=c-archive ./cmd/ck-ovpn-plugin/
-        mkdir ./release/plugin/windows
         CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc  GOOS="windows" GOARCH="amd64" go build -v -o ./release/plugin/windows/ck-ovpn-plugin.dll -buildmode=c-shared ./cmd/ck-ovpn-plugin/
 
     - name: Archive Linux client binary
