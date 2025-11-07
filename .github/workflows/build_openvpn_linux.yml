@@ -14,9 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        # TODO: Restore all architectures after ARM64 testing is complete
-        # Original: arch: [x86_64, arm64] #, x86, arm32]
-        arch: [arm64]  # Temporarily ARM64 only for testing
+        arch: [x86_64, arm64]
       fail-fast: false
 
     env:
@@ -153,7 +151,7 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openvpn-linux
+          name: openvpn-linux-${{ matrix.arch }}
           path: openvpn/buildOvpn/* 
 
   Build-OpenVPN3-Linux:
@@ -168,9 +166,7 @@ jobs:
 
     strategy:
       matrix:
-        # TODO: Restore all architectures after ARM64 testing is complete
-        # Original: arch: [x86_64, arm64] #, x86, arm32]
-        arch: [arm64]  # Temporarily ARM64 only for testing
+        arch: [x86_64, arm64]
       fail-fast: false
 
     env:
@@ -286,7 +282,7 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openvpn3-linux
+          name: openvpn3-linux-${{ matrix.arch }}
           path: ${{env.O3}}/core/build/test
 
 

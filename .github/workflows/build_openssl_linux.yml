@@ -15,9 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        # TODO: Restore all architectures after ARM64 testing is complete
-        # Original: arch: [x86, x86_64, arm32, arm64]
-        arch: [arm64]  # Temporarily ARM64 only for testing
+        arch: [x86_64, arm64]
       fail-fast: false
 
     steps:

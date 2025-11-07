@@ -21,23 +21,21 @@ jobs:
     strategy:
       matrix:
         target:
-          # TODO: Restore all targets after ARM64 testing is complete
-          # Original targets included all platforms below
-          # - i686-unknown-linux-musl
-          # - x86_64-pc-windows-gnu
-          # - x86_64-unknown-linux-gnu
-          # - x86_64-unknown-linux-musl
-          # - armv7-unknown-linux-musleabihf
-          # - armv7-unknown-linux-gnueabihf
-          # - arm-unknown-linux-gnueabi
-          # - arm-unknown-linux-gnueabihf
-          # - arm-unknown-linux-musleabi
-          # - arm-unknown-linux-musleabihf
-          - aarch64-unknown-linux-gnu  # Temporarily ARM64 only for testing
-          - aarch64-unknown-linux-musl  # Temporarily ARM64 only for testing
-          # - mips-unknown-linux-musl
-          # - mips-unknown-linux-gnu
-          # - mipsel-unknown-linux-musl
+          - i686-unknown-linux-musl
+          - x86_64-pc-windows-gnu
+          - x86_64-unknown-linux-gnu
+          - x86_64-unknown-linux-musl
+          - armv7-unknown-linux-musleabihf
+          - armv7-unknown-linux-gnueabihf
+          - arm-unknown-linux-gnueabi
+          - arm-unknown-linux-gnueabihf
+          - arm-unknown-linux-musleabi
+          - arm-unknown-linux-musleabihf
+          - aarch64-unknown-linux-gnu
+          - aarch64-unknown-linux-musl
+          - mips-unknown-linux-musl
+          - mips-unknown-linux-gnu
+          - mipsel-unknown-linux-musl
 
     steps:
       - uses: actions/checkout@v3
