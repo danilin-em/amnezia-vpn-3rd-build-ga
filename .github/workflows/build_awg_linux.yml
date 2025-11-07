@@ -11,9 +11,21 @@ jobs:
       contains(github.event.head_commit.message, '[all]') ||
       contains(github.event.head_commit.message, '[linux]') ||
       contains(github.event.head_commit.message, '[linux-awg]') ||
-      contains(github.event.head_commit.message, '[awg]') 
+      contains(github.event.head_commit.message, '[awg]')
+
+    strategy:
+      matrix:
+        arch: [x86_64, arm64]
+      fail-fast: false
 
     steps:
+
+    - name: Set up build environment for ARM64
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      if: matrix.arch == 'arm64'
+      with:
+        packages: gcc-aarch64-linux-gnu
+        version: 1.0
 
     - name: 'Get AmneziaWG'
       uses: actions/checkout@v4
@@ -25,13 +37,21 @@ jobs:
     - name: 'Run build script'
       working-directory: amneziawg-go
       run: |
-        make
-        ./amneziawg-go --version
+        case "${{ matrix.arch }}" in
+          x86_64)
+            make
+            ./amneziawg-go --version
+            ;;
+          arm64)
+            GOARCH=arm64 CC=aarch64-linux-gnu-gcc CGO_ENABLED=1 make
+            file ./amneziawg-go
+            ;;
+        esac
 
     - name: 'Archive artifacts'
       uses: actions/upload-artifact@v4
       with:
-        name: awg-linux
+        name: awg-linux-${{ matrix.arch }}
         path: amneziawg-go/amneziawg-go
 
   github-release:
@@ -57,7 +77,7 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: awg-linux.zip
+        file: awg-linux-*.zip
         tag: ${{ github.ref }}
         overwrite: true
         file_glob: true

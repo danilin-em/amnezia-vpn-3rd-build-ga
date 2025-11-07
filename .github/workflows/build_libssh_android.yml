@@ -98,7 +98,7 @@ jobs:
         cmake .. -DANDROID_PLATFORM=android-21 -DCMAKE_ANDROID_API_MIN=21 -DCMAKE_ANDROID_API=21 -DWITH_GSSAPI=OFF -DCMAKE_CXX_FLAGS="-D__USE_BSD=1 " -DCMAKE_C_FLAGS="-D__USE_BSD=1"  -DCMAKE_SYSTEM_NAME=Android -DWITH_SERVER=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_SYSTEM_VERSION=24 -DANDROID_ABI=$ANDROID_ARCH -DCMAKE_ANDROID_ARCH_ABI=$ANDROID_ARCH -DANDROID_NDK=$ANDROID_NDK_ROOT -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK_ROOT/build/cmake/android.toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DOPENSSL_USE_STATIC_LIBS=TRUE -DZLIB_LIBRARY=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}}/libz.a -DZLIB_INCLUDE=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}} -DOPENSSL_CRYPTO_LIBRARY=${{github.workspace}}/openssl-${{env.OPENSSL_VERSION}}/libcrypto.a -DOPENSSL_SSL_LIBRARY=${{github.workspace}}/openssl-${{env.OPENSSL_VERSION}}/libssl.a -DOPENSSL_INCLUDE_DIR=${{github.workspace}}/openssl-${{env.OPENSSL_VERSION}}/include -DCMAKE_EXE_LINKER_FLAGS="-static"
         PATH=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH make ssh 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v4
       with:
         name: libssh-android-${{ matrix.arch }}
         path: ${{ github.workspace }}/libssh-${{env.LIBSSH_VERSION}}/build
@@ -116,7 +116,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup | Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Setup | Checksums
         run: for file in $(find ./ -name '*.so' ); do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done

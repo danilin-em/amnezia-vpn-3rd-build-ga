@@ -59,7 +59,6 @@ jobs:
       contents: write
     strategy:
       matrix:
-        # Include amd64 on all platforms.
         goos: [windows, linux, darwin]
         goarch: [amd64, 386]
         exclude:
@@ -94,8 +93,8 @@ jobs:
           #  goarm: 7
           # BEGIN Other architectures
           # BEGIN riscv64 & ARM64 & LOONG64
-          # - goos: linux
-          #  goarch: arm64
+          - goos: linux
+            goarch: arm64
           # - goos: linux
           #  goarch: riscv64
           # - goos: linux

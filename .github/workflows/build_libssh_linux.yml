@@ -21,7 +21,7 @@ jobs:
       contains(github.event.head_commit.message, '[libssh]')    
     strategy:
       matrix:
-        arch: [x86_64]
+        arch: [x86_64, arm64]
         # no-crypto=yes: builds version with all crypto disabled
         # no-crypto=no: builds version with all crypto enabled (where required dependencies are available)
         no_crypto:
@@ -39,9 +39,9 @@ jobs:
         
     - name: Set up build environment
       uses: awalsh128/cache-apt-pkgs-action@latest
-      if: matrix.arch != 'x86' && matrix.arch != 'x86_64'  
+      if: matrix.arch != 'x86' && matrix.arch != 'x86_64'
       with:
-        packages: gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
+        packages: gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
         version: 1.0    
 
 
@@ -71,17 +71,31 @@ jobs:
     - name: Build openssl
       run: |
         cd openssl-${{env.OPENSSL_VERSION}}
-        ./Configure no-tests no-shared linux-x86_64 
+        case "${{ matrix.arch }}" in
+          x86_64)
+            ./Configure no-tests no-shared linux-x86_64
+            ;;
+          arm64)
+            ./Configure no-tests no-shared linux-aarch64 --cross-compile-prefix=aarch64-linux-gnu-
+            ;;
+        esac
         make
 
     - name: Build libssh
       run: |
         cd libssh-${{env.LIBSSH_VERSION}}/build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DOPENSSL_USE_STATIC_LIBS=TRUE -DWITH_GSSAPI=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_EXE_LINKER_FLAGS="-static" -DOPENSSL_ROOT_DIR=${{github.workspace}}/openssl-${{env.OPENSSL_VERSION}} -DZLIB_ROOT_DIR=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}} -DZLIB_LIBRARY=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}}/libz.a 
+        case "${{ matrix.arch }}" in
+          x86_64)
+            cmake .. -DCMAKE_BUILD_TYPE=Release -DOPENSSL_USE_STATIC_LIBS=TRUE -DWITH_GSSAPI=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_EXE_LINKER_FLAGS="-static" -DOPENSSL_ROOT_DIR=${{github.workspace}}/openssl-${{env.OPENSSL_VERSION}} -DZLIB_ROOT_DIR=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}} -DZLIB_LIBRARY=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}}/libz.a
+            ;;
+          arm64)
+            cmake .. -DCMAKE_BUILD_TYPE=Release -DOPENSSL_USE_STATIC_LIBS=TRUE -DWITH_GSSAPI=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_EXE_LINKER_FLAGS="-static" -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=aarch64 -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ -DOPENSSL_ROOT_DIR=${{github.workspace}}/openssl-${{env.OPENSSL_VERSION}} -DZLIB_ROOT_DIR=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}} -DZLIB_LIBRARY=${{github.workspace}}/zlib-${{env.ZLIB_VERSION}}/libz.a
+            ;;
+        esac
         make ssh
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v4
       with:
         name: libssh-linux-${{ matrix.arch }}
         path: ${{ github.workspace }}/libssh-${{env.LIBSSH_VERSION}}/build
@@ -96,10 +110,10 @@ jobs:
 
     steps:
       - name: Setup | Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup | Artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Setup | Checksums
         run: for file in $(find ./ -name '*.a' ); do openssl dgst -sha256 -r "$file" | awk '{print $1}' > "${file}.sha256"; done
