@@ -215,22 +215,16 @@ jobs:
           cd core/scripts/linux/
           ./build-all
 
-      - name: Build LZ4 for ARM64
+      - name: Rebuild LZ4 for ARM64
         if: matrix.arch == 'arm64'
         run: |
           echo "************************************************"
-          echo "******** Building LZ4 for ARM64..."
+          echo "******** Rebuilding LZ4 for ARM64..."
           echo "************************************************"
-          cd ${{env.DEP_DIR}}/lz4/lz4-linux
-          case "${{ matrix.arch }}" in
-            x86_64)
-              sudo make install PREFIX=${{env.DEP_DIR}}/lz4/lz4-linux
-              ;;
-            arm64)
-              sudo make install PREFIX=${{env.DEP_DIR}}/lz4/lz4-linux CC=aarch64-linux-gnu-gcc AR=aarch64-linux-gnu-ar
-              ;;
-          esac
-          cd ${{env.DEP_DIR}}/lz4/lz4-linux/lib
+          cd ${{env.DEP_DIR}}/lz4
+          make clean
+          sudo make install PREFIX=${{env.DEP_DIR}}/lz4 CC=aarch64-linux-gnu-gcc AR=aarch64-linux-gnu-ar
+          cd ${{env.DEP_DIR}}/lz4/lib
           sudo rm -f *.so *.so.*
 
       - name: Build OpenSSL
